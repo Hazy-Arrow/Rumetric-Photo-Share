@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo Search</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>RUMETRIC - HDPY SCHOOL</h1>
+  </header>
+
+  <div class="container">
+    <h2>Get Your Photo</h2>
+    <div class="search-box">
+      <input type="text" id="photoInput" placeholder="Enter photo name (without extension)">
+      <button onclick="showPhoto()">Search</button>
+    </div>
+    <div id="photoDisplay" class="photo-display">
+      <!-- Photo and buttons will be displayed here -->
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 RUMETRIC. Developed by <a href="https://www.hazyarrow.cloud" target="_blank">HazyArrow</a>.</p>
+  </footer>
+
+  <script>
+    function showPhoto() {
+      const input = document.getElementById("photoInput").value.trim();
+      const photoDisplay = document.getElementById("photoDisplay");
+
+      if (input) {
+        const photoPath = `photos/${input}.jpg`; // Assuming the photos are .jpg format
+
+        // Clear previous content
+        photoDisplay.innerHTML = "";
+
+        // Create an image element
+        const img = document.createElement("img");
+        img.src = photoPath;
+        img.alt = input;
+
+        // Handle image loading errors
+        img.onerror = () => {
+          photoDisplay.innerHTML = `<p style="color: red;">Photo not found!</p>`;
+        };
+
+        // Append the image to the display div
+        img.onload = () => {
+          photoDisplay.appendChild(img);
+
+          // Action buttons container
+          const actionButtons = document.createElement("div");
+          actionButtons.className = "action-buttons";
+
+          // Create a download button
+          const downloadButton = document.createElement("button");
+          downloadButton.className = "action-button download-button";
+          downloadButton.textContent = "Download Photo";
+          downloadButton.onclick = () => downloadImage(photoPath, `${input}.jpg`);
+          actionButtons.appendChild(downloadButton);
+
+          // Create a share button
+          const shareButton = document.createElement("button");
+          shareButton.className = "action-button share-button";
+          shareButton.textContent = "Share Photo";
+          shareButton.onclick = () => shareImage(photoPath, input);
+          actionButtons.appendChild(shareButton);
+
+          // Append action buttons to the display
+          photoDisplay.appendChild(actionButtons);
+        };
+      } else {
+        photoDisplay.innerHTML = `<p style="color: red;">Please enter a photo name.</p>`;
+      }
+    }
+
+    function downloadImage(imagePath, fileName) {
+      const link = document.createElement("a");
+      link.href = imagePath;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function shareImage(imagePath, imageName) {
+      const shareData = {
+        title: "Euphoria Annual Day",
+        text: `HDPY Annual Day Photo ©️Rumetric: ${imageName}`,
+        url: imagePath,
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData)
+          .then(() => console.log("Shared successfully"))
+          .catch(console.error);
+      } else {
+        // Fallback to WhatsApp share
+        const whatsappUrl = `https://wa.me/?text=Euphoria HDPY Annual Day Photo ©️Rumetric: ${encodeURIComponent(shareData.url)}`;
+        window.open(whatsappUrl, "_blank");
+      }
+    }
+
+     // List of images in the bgimg folder
+     const images = [
+      'bgimg/1.jpg',
+      'bgimg/2.jpg',
+      'bgimg/3.jpg',
+      'bgimg/4.jpg',
+      'bgimg/5.jpg',
+      'bgimg/6.jpg',
+      'bgimg/7.jpg',
+      'bgimg/8.jpg',
+      'bgimg/9.jpg',
+      'bgimg/10.jpg',
+      'bgimg/11.jpg',
+      'bgimg/12.jpg',
+
+    ];
+
+    // Function to set a random background image
+    function setRandomBackground() {
+      const randomIndex = Math.floor(Math.random() * images.length); // Get a random index
+      const randomImage = images[randomIndex]; // Get the random image from the list
+      document.body.style.backgroundImage = `url('${randomImage}')`; // Set the background image
+    }
+
+    // Set the background when the page loads
+    window.onload = setRandomBackground;
+  </script>
+  </script>
+</body>
+</html>
